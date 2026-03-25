@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LoginForm } from '@/components/auth/LoginForm'
+import { LoginForm, Test } from '@/components/auth/LoginForm'
 
 export default function LandingPage() {
   return (
@@ -15,6 +15,7 @@ export default function LandingPage() {
             <span>✍️</span>
             <span>1日5行の記録で続けやすい</span>
           </div>
+          <Test/>
           <div className="flex items-center gap-2">
             <span>🧠</span>
             <span>AIが感情を分析してタグ付け</span>

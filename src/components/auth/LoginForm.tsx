@@ -4,6 +4,12 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
+export function Test() {
+  const test = "こんにちは"
+  return test
+}
+
+
 export function LoginForm() {
   const router = useRouter()
   const supabase = createClient()

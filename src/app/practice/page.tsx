@@ -92,7 +92,29 @@ export default function PracticePage() {
   const removeTodo = (index: number) => {
     setTodos(todos.filter((_, i) => i !== index)) // 選んだindex以外を残す
   }
-
+// 変数を使った計算練習
+      const price = 1000
+      const tax = 0.1
+      const firstName =`松岡`
+      const lastName =`史華`
+      const num1:number = 10
+      const num2:number = 5
+      const scores = [80,90,10,100]
+      const total = scores.reduce((a,b)=> a+b,0)
+      const average = total / scores.length
+      const name ="Claude Codeが出してくれた練習問題"
+      const practice1 = "①消費税10%込みの値段を表示する（商品価格: 500円)→"
+      const practice2 = "②自分の名前をフルネームで結合して表示する"
+      const practice3 = "③100 ÷ 7 の答えと余りをそれぞれ表示する"
+      const practice4 = "④ 3教科のテストの点数（国語80, 数学65, 英語90の合計と平均を表示する"
+      const array = [80,65,90]
+      const array_total = array.reduce((a,b) => a+b,0)
+      const array_average = (array.reduce((a,b) => a+b,0))/array.length
+      const practice5 = "⑤2つの数字を比較して大きい方に「こちらが大きい」と表示する"
+      const num3:number = 30
+      const num4:number = 11
+      const practice6 = "⑥useState を使って、入力した数字の消費税込み価格をリアルタイムで表示する"
+      const [price1,setPrice] = useState(0)
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-10">
       <h1 className="text-2xl font-bold text-gray-900">React 基礎練習</h1>
@@ -102,17 +124,53 @@ export default function PracticePage() {
       ====================================== */}
       <section className="space-y-3">
         <h2 className="text-lg font-bold text-gray-800 border-b pb-1">① JSX と式の埋め込み</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-800">
           JSXはHTMLに似た書き方。<code className="bg-gray-100 px-1 rounded">{'{}'}</code>の中にJavaScriptの式を書ける。
         </p>
-        <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <p>文字列: <span className="font-bold">{'こんにちは！'}</span></p>
-          <p>計算式: <span className="font-bold">{1 + 2 + 3}</span></p>
-          <p>三項演算子: <span className="font-bold">{10 > 5 ? '10は5より大きい' : '10は5より小さい'}</span></p>
+        <div className="rounded-lg p-4 space-y-2">
+          <p>文字列:{'こんにちは！'}</p>
+          <p>計算式: <span className="font-bold">{1 + 4 + 3}</span></p>
+          <p>足し算：<span className="font-bold">{10+5}</span></p>
+          <p>引き算：<span className="font-bold">{10-5}</span></p>
+          <p>掛け算：<span className="font-bold">{10*5}</span></p>
+          <p>割り算：<span className="font-bold">{10/5}</span></p>
+          <p>余りの式：<span className="font-bold">{10%3}</span></p>
+          <p className="font-bold">変数を使った計算<span>{price*(1+tax)}</span></p>
+          <p>計算式：<span className="font-bold">{price*tax}</span></p>
+          <p>計算式：<span className="font-bold">{firstName+lastName}</span></p>
+          <p>計算式：<span className="font-bold">{`こんにちは、${firstName}さん`}</span></p>
+          <p>三項演算子：<span className="font-bold">{"10 === 10?'同じ':'違う'"}</span></p>
+          <p>三項演算子：<span className="font-bold">{10 === 10?'同じ':'違う'}</span></p>
+          <p>三項演算子：<span className="font-bold">{num1 !== num2?'違う':'同じ'}</span></p>
+          <p>三項演算子: <span className="font-bold">{10 > 11 ? '10は5より大きい' : '10は5より小さい'}</span></p>
+          <p>配列：<span className="font-bold">{scores.length}</span></p>
+          <p>配列 最大の値：<span className="font-bold">{Math.max(...scores)}</span></p>
+          <p>配列 最小の値：<span className="font-bold">{Math.min(...scores)}</span></p>
+          <p>配列 合計：<span className="font-bold">{total}</span></p>
+          <p>配列 平均値<span className="font-bold">{average}</span></p>
           <p>今の時刻: <span className="font-bold">{new Date().toLocaleTimeString('ja-JP')}</span></p>
+          <p className="font-bold text-blue-800">{name}</p>
+          <p>{practice1}{500*(1+0.1)}</p>
+          <p>{practice2}:{firstName+lastName}</p>
+          <p>{practice3}<br/><span>割り算：{100/7}<br/>余り：{100%7}</span></p>
+          <p>{practice4}<br/>合計：{array_total}<br/>平均：{array_average}</p>
+          <p>{practice5}<br/>{num3>num4?`${num3}が大きい`:`${num4}が大きい`}</p>
+          <div>
+            <p>{practice6}</p>
+            <div className="flex items-center gap-2">
+              <p>入力欄</p>
+              <input className="border border-gray-300 rounded px-2 py-1" onChange={(e) => setPrice(Number(e.target.value))}/>
+              <span>税込価格：{price1*1.1}円</span>
+            </div>
+          </div>
+
+
+
+
+          <p></p>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <code>{`// {}の中はJavaScriptとして評価される`}<br />{`<p>{1 + 2 + 3}</p>  // → 6 と表示`}</code>
+        <div className="bg-blue-50 border border-blue-400 rounded p-3 text-sm text-blue-800">
+          <code>{"// {}の中はJavaScriptとして評価される"}<br />{'<p>{1 + 2 + 3}</p>  // → 6 と表示'}</code>
         </div>
       </section>
 
@@ -121,7 +179,7 @@ export default function PracticePage() {
       ====================================== */}
       <section className="space-y-20">
         <h2 className="text-lg font-bold text-gray-800 border-b pt-5 pb-1 text-center">② コンポーネントと Props</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-800">
           部品（コンポーネント）を作って、データ（props）を渡して再利用できる。
         </p>
         <div className="space-y-5">
@@ -130,15 +188,18 @@ export default function PracticePage() {
             <Badge text="Hello" color="#3178c6" />
             <Badge text="アニョハセヨ" color="#000000" />
           </div>
-          <p className="text-sm text-gray-600">↑ 同じ Badge コンポーネントに違う props を渡している</p>
+          <p className="text-sm text-gray-800">↑ 同じ Badge コンポーネントに違う props を渡している</p>
         </div>
         <div className="space-y-10">
           <UserCard name="松岡さん" age={25} job="エンジニア" />
           <UserCard name="田中さん" age={30} job="デザイナー" />
           <UserCard name="杉野さん" age={29} job="俳優" />
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <code>{`// コンポーネントを定義`}<br />
+        <div className="bg-blue-50 border border-blue-400 rounded p-3 text-sm text-blue-800">
+          <code>{`// コンポーネントを定義する`}<br />
+          {'こんにちは、${name}さん'}<br />
+          {"こんにちは、${name}さん"}<br />
+          {`こんにちは、${name}さん`}<br />
           {`function Badge({ text, color }) {`}<br />
           {`  return <span style={{ color }}>{text}</span>`}<br />
           {`}`}<br /><br />

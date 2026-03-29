@@ -7,6 +7,7 @@ import { z } from 'zod'
 const createDiarySchema = z.object({
   content: z.string().min(1).max(2000),
   mood_score: z.number().int().min(1).max(5),
+  date: z.string().optional(), // 例: "2026-03-20"（過去日付対応）
 })
 
 export async function POST(request: NextRequest) {
@@ -23,20 +24,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { content, mood_score } = parsed.data
+  const { content, mood_score, date } = parsed.data
+
+  // 1日1回チェック
+  const targetDate = date ?? new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' })
+  const dayStart = `${targetDate}T00:00:00+09:00`
+  const dayEnd = `${targetDate}T23:59:59+09:00`
+  const { data: existing } = await supabase
+    .from('diaries')
+    .select('id')
+    .eq('user_id', user.id)
+    .gte('created_at', dayStart)
+    .lte('created_at', dayEnd)
+    .limit(1)
+    .maybeSingle()
+
+  if (existing) {
+    return NextResponse.json({ error: 'すでにこの日の日記があります' }, { status: 409 })
+  }
 
   // Embedding生成
   const embedding = await generateEmbedding(content)
 
-  // DB保存
+  // DB保存（過去日付の場合は created_at を指定）
+  const insertData: Record<string, unknown> = {
+    user_id: user.id,
+    content,
+    mood_score,
+    embedding: JSON.stringify(embedding),
+  }
+  if (date) {
+    insertData.created_at = `${date}T12:00:00+09:00`
+  }
+
   const { data: diary, error } = await supabase
     .from('diaries')
-    .insert({
-      user_id: user.id,
-      content,
-      mood_score,
-      embedding: JSON.stringify(embedding),
-    })
+    .insert(insertData)
     .select('id, content, mood_score, created_at')
     .single()
 

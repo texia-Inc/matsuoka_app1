@@ -1,55 +1,87 @@
+'use client'
+
 export const dynamic = 'force-dynamic'
 
-import { createClient } from '@/lib/supabase/server'
+import { useState, useEffect, useRef } from 'react'
 import { DiaryForm } from '@/components/diary/DiaryForm'
 import { DiaryCalendar } from '@/components/diary/DiaryCalendar'
 import { FeedbackPanel } from '@/components/diary/FeedbackPanel'
-import { AnalysisPanel } from '@/components/diary/AnalysisPanel'
 import { DiaryCard } from '@/components/diary/DiaryCard'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import type { Diary } from '@/lib/types'
 
-export default async function DashboardPage() {
-  const supabase = await createClient()
+export default function DashboardPage() {
+  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' })
 
-  // 今日の日記を取得（JST基準）
-  const todayJST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' })
-  const todayStart = `${todayJST}T00:00:00+09:00`
-  const todayEnd = `${todayJST}T23:59:59+09:00`
+  const [selectedDate, setSelectedDate] = useState<string>(todayStr)
+  const [selectedDiary, setSelectedDiary] = useState<Diary | undefined>(undefined)
+  const [loading, setLoading] = useState(true)
+  const skipFetchRef = useRef(false)
 
-  const { data: todayDiary } = await supabase
-    .from('diaries')
-    .select('id, content, mood_score, analysis, created_at')
-    .gte('created_at', todayStart)
-    .lte('created_at', todayEnd)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  // 選択した日付の日記を取得
+  const fetchDiary = async (date: string) => {
+    setLoading(true)
+    const month = date.slice(0, 7)
+    const res = await fetch(`/api/diary?month=${month}`)
+    const data = await res.json()
+    if (Array.isArray(data)) {
+      const diary = data.find((d: Diary) =>
+        d.created_at.startsWith(date) ||
+        new Date(d.created_at).toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' }) === date
+      )
+      setSelectedDiary(diary)
+    }
+    setLoading(false)
+  }
 
-  const today = new Date()
-  const dateLabel = format(today, 'yyyy年M月d日(E)', { locale: ja })
+  useEffect(() => {
+    if (skipFetchRef.current) {
+      skipFetchRef.current = false
+      return
+    }
+    fetchDiary(selectedDate)
+  }, [selectedDate])
+
+  // カレンダークリック：日記はすでに渡されるのでfetchしない
+  const handleSelectDay = (diary: Diary | undefined, date?: string) => {
+    if (date) {
+      skipFetchRef.current = true
+      setSelectedDate(date)
+      setSelectedDiary(diary)
+      setLoading(false)
+    }
+  }
+
+  const dateLabel = format(new Date(selectedDate + 'T12:00:00'), 'yyyy年M月d日(E)', { locale: ja })
+  const isToday = selectedDate === todayStr
 
   return (
     <div className="space-y-6">
-      <DiaryCalendar />
+      <DiaryCalendar onSelectDay={handleSelectDay} />
 
-      <div>
-        <h1 className="text-xl font-bold text-gray-900">{dateLabel}</h1>
-      </div>
+      {/* 選択日付のヘッダー（日記がない場合のみ表示） */}
+      {!selectedDiary && !loading && (
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">{dateLabel}</h1>
+          {!isToday && (
+            <p className="text-sm text-gray-400 mt-1">過去の日記</p>
+          )}
+        </div>
+      )}
 
-      {todayDiary ? (
-        <DiaryCard diary={todayDiary as Diary} />
+      {loading ? (
+        <div className="h-32 bg-gray-100 rounded-2xl animate-pulse" />
+      ) : selectedDiary ? (
+        <DiaryCard diary={selectedDiary} />
       ) : (
-        <DiaryForm />
+        <DiaryForm
+          date={isToday ? undefined : selectedDate}
+          onSaved={() => fetchDiary(selectedDate)}
+        />
       )}
 
-      {todayDiary && (
-        <>
-          <AnalysisPanel analysis={(todayDiary as Diary).analysis} />
-          <FeedbackPanel />
-        </>
-      )}
+      {selectedDiary && <FeedbackPanel />}
     </div>
   )
 }

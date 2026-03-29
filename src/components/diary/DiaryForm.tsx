@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { MoodSlider } from './MoodSlider'
 import { toast } from 'sonner'
+import type { Diary } from '@/lib/types'
 
 const schema = z.object({
   content: z.string().min(1, '日記を入力してください').max(2000),
@@ -17,13 +18,23 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function DiaryForm() {
+interface DiaryFormProps {
+  date?: string       // 過去日付 例: "2026-03-20"
+  diary?: Diary       // 編集時に渡す既存日記
+  onSaved?: () => void
+}
+
+export function DiaryForm({ date, diary, onSaved }: DiaryFormProps) {
   const router = useRouter()
-  const [mood, setMood] = useState(3)
+  const isEdit = !!diary
+  const [mood, setMood] = useState(diary?.mood_score ?? 3)
 
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { content: '', mood_score: 3 },
+    defaultValues: {
+      content: diary?.content ?? '',
+      mood_score: diary?.mood_score ?? 3,
+    },
   })
 
   const handleMoodChange = (value: number) => {
@@ -32,26 +43,40 @@ export function DiaryForm() {
   }
 
   const onSubmit = async (data: FormData) => {
-    const res = await fetch('/api/diary', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
+    let res: Response
+
+    if (isEdit) {
+      // 編集モード: PUT
+      res = await fetch(`/api/diary/${diary.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+    } else {
+      // 新規作成: POST（過去日付対応）
+      res = await fetch('/api/diary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, date }),
+      })
+    }
 
     if (!res.ok) {
-      toast.error('日記の保存に失敗しました')
+      const err = await res.json()
+      toast.error(err.error ?? '保存に失敗しました')
       return
     }
 
-    toast.success('日記を保存しました！AIが分析中です...')
+    toast.success(isEdit ? '日記を更新しました！' : '日記を保存しました！AIが分析中です...')
     reset()
     setMood(3)
+    onSaved?.()
     router.refresh()
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="rounded-xl border border-gray-300 bg-white overflow-hidden transition-colors duration-200 focus-within:border-gray-900">
+      <div className="rounded-2xl border border-gray-300 bg-white overflow-hidden">
         <Textarea
           placeholder="今日はどんな一日でしたか？気になったこと、感じたこと、出来事を自由に書いてみましょう。"
           rows={6}
@@ -66,7 +91,7 @@ export function DiaryForm() {
         </div>
       </div>
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? '保存中...' : '日記を保存する'}
+        {isSubmitting ? '保存中...' : isEdit ? '日記を更新する' : '日記を保存する'}
       </Button>
     </form>
   )

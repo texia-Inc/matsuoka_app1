@@ -17,7 +17,7 @@ const MOOD_COLOR: Record<number, string> = {
 }
 
 interface DiaryCalendarProps {
-  onSelectDay?: (diary: Diary | undefined) => void
+  onSelectDay?: (diary: Diary | undefined, date?: string) => void
 }
 
 export function DiaryCalendar({ onSelectDay }: DiaryCalendarProps) {
@@ -52,19 +52,21 @@ export function DiaryCalendar({ onSelectDay }: DiaryCalendarProps) {
   const handleDayClick = (date: Date) => {
     const key = format(date, 'yyyy-MM-dd')
     setSelected(key)
-    onSelectDay?.(diaryMap.get(key))
+    onSelectDay?.(diaryMap.get(key), key)
   }
 
   return (
-    <div className="w-full rounded-xl border border-gray-300 bg-white p-4">
+    <div className="w-full rounded-2xl border border-gray-300 bg-white p-4">
       {/* ヘッダー：曜日グリッドと同じ7列 日|月|火水木|金|土 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', width: '100%' }} className="mb-4 items-center">
         <div />
         <button
           onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-          className="flex items-center justify-end p-1 rounded hover:bg-gray-100"
+          className="flex items-center justify-end"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <span className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </span>
         </button>
         <div className="col-span-3 flex items-center justify-center">
           <span className="text-xl font-semibold">
@@ -73,9 +75,11 @@ export function DiaryCalendar({ onSelectDay }: DiaryCalendarProps) {
         </div>
         <button
           onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-          className="flex items-center justify-start p-1 rounded hover:bg-gray-100"
+          className="flex items-center justify-start"
         >
-          <ChevronRight className="w-5 h-5" />
+          <span className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors">
+            <ChevronRight className="w-5 h-5" />
+          </span>
         </button>
         <div />
       </div>
@@ -108,24 +112,33 @@ export function DiaryCalendar({ onSelectDay }: DiaryCalendarProps) {
             <button
               key={key}
               onClick={() => handleDayClick(date)}
-              style={{ width: '100%', aspectRatio: '1.6', fontSize: '1.1rem' }}
+              style={{ width: '100%', aspectRatio: '1.6' }}
               className={[
-                'flex flex-col items-center justify-center rounded-md font-medium transition-colors',
+                'relative flex items-center justify-center font-medium',
                 isCurrentMonth ? '' : 'opacity-30',
-                isSelected ? 'ring-2 ring-gray-400' : '',
-                isToday(date) ? 'font-bold underline' : '',
-                'hover:bg-gray-100',
-                dayOfWeek === 0 ? 'text-red-500' : dayOfWeek === 6 ? 'text-blue-500' : 'text-gray-800',
               ].filter(Boolean).join(' ')}
             >
-              {date.getDate()}
-              {diary ? (
+              <span
+                className={[
+                  'flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium',
+                  isToday(date)
+                    ? 'bg-gray-900 text-white font-bold'
+                    : isSelected
+                    ? 'border-2 border-gray-900 text-gray-900 font-bold'
+                    : dayOfWeek === 0
+                    ? 'text-red-500'
+                    : dayOfWeek === 6
+                    ? 'text-blue-500'
+                    : 'text-gray-800',
+                ].filter(Boolean).join(' ')}
+              >
+                {date.getDate()}
+              </span>
+              {diary && (
                 <span
                   style={{ backgroundColor: MOOD_COLOR[diary.mood_score] }}
-                  className="mt-0.5 w-1.5 h-1.5 rounded-full"
+                  className="absolute bottom-1 w-1.5 h-1.5 rounded-full"
                 />
-              ) : (
-                <span className="mt-0.5 w-1.5 h-1.5" />
               )}
             </button>
           )

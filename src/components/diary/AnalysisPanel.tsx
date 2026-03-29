@@ -8,13 +8,7 @@ interface AnalysisPanelProps {
 
 export function AnalysisPanel({ analysis }: AnalysisPanelProps) {
   if (!analysis) {
-    return (
-      <Card>
-        <CardContent className="pt-6">
-          <p className="text-sm text-gray-400 text-center">AI分析中...</p>
-        </CardContent>
-      </Card>
-    )
+    return null
   }
 
   return (

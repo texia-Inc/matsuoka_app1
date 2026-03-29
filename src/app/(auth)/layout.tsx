@@ -29,17 +29,20 @@ export default async function AuthLayout({
           <Link href="/dashboard" className="text-lg font-bold text-gray-900">
             AI日記
           </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/timeline" className="text-sm text-gray-600 hover:text-gray-900">
+          <nav className="flex items-center gap-3">
+            <Link href="/dashboard" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
+              ホーム
+            </Link>
+            <Link href="/timeline" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
               タイムライン
             </Link>
-            <Link href="/search" className="text-sm text-gray-600 hover:text-gray-900">
-              検索
-            </Link>
             <form action={handleSignOut}>
-              <Button variant="ghost" size="sm" type="submit">
+              <button
+                type="submit"
+                className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors"
+              >
                 ログアウト
-              </Button>
+              </button>
             </form>
           </nav>
         </div>

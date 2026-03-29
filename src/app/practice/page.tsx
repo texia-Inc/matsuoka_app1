@@ -98,7 +98,7 @@ export default function PracticePage() {
       setMoodMessage('😄 最高！その調子！')
     }else {
       setMoodMessage('1〜5の数字を入力してください')
-    }},[moodMessage])
+    }},[mood])
 
   // --- 演算処理 ---
   const calculate = () => {

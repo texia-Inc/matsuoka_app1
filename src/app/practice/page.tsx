@@ -66,6 +66,40 @@ export default function PracticePage() {
     else setMessage(`${Math.abs(count)}回マイナスしました`)
   }, [count])
 
+  const [hour, setHour] = useState('')
+  const [greeting, setGreeting] = useState('どんな挨拶が表示されるか確かめる')
+
+  useEffect(() =>{
+    const h =parseInt(hour)
+    if(isNaN(h)){
+      setGreeting('時間を入力してください')
+    }else if (h >= 5 && h < 11){
+      setGreeting('おはようございます')
+    }else if (h > 11 && h < 18){
+      setGreeting('こんにちは')
+    }else if (h >= 18 && h <5){
+      setGreeting('こんばんは')
+    }
+  },[hour])
+
+  const [mood, setMood] = useState('')
+  const [moodMessage, setMoodMessage] = useState('数字を入力してください')
+  useEffect(() =>{
+    const m = parseInt(mood)
+    if(m === 1){
+      setMoodMessage('😢 つらいね、ゆっくり休んでね')
+    }else if (m === 2){
+      setMoodMessage('😔 しんどいね、無理しないで')
+    }else if (m === 3){
+      setMoodMessage('😐 ふつうの一日だったね')
+    }else if (m === 4){
+      setMoodMessage('🙂 良い一日だったね！')
+    }else if (m === 5){
+      setMoodMessage('😄 最高！その調子！')
+    }else {
+      setMoodMessage('1〜5の数字を入力してください')
+    }},[moodMessage])
+
   // --- 演算処理 ---
   const calculate = () => {
     const a = parseFloat(numA)
@@ -163,11 +197,6 @@ export default function PracticePage() {
               <span>税込価格：{price1*1.1}円</span>
             </div>
           </div>
-
-
-
-
-          <p></p>
         </div>
         <div className="bg-blue-50 border border-blue-400 rounded p-3 text-sm text-blue-800">
           <code>{"// {}の中はJavaScriptとして評価される"}<br />{'<p>{1 + 2 + 3}</p>  // → 6 と表示'}</code>
@@ -213,10 +242,10 @@ export default function PracticePage() {
       ====================================== */}
       <section className="space-y-3">
         <h2 className="text-lg font-bold text-gray-800 border-b pb-1">③ useState（状態管理）</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-800">
           値が変わると画面が自動で更新される。通常の変数では画面は更新されない。
         </p>
-        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
           <p className="text-2xl font-bold text-center text-gray-900">{count}</p>
           <p className="text-center text-sm text-gray-500">{message}</p>
           <div className="flex justify-center gap-3">
@@ -224,7 +253,7 @@ export default function PracticePage() {
               onClick={() => setCount(count - 1)}
               className="px-4 py-2 bg-gray-200 rounded-lg font-bold hover:bg-gray-300"
             >
-              − 1
+              - 1
             </button>
             <button
               onClick={() => setCount(0)}
@@ -236,13 +265,35 @@ export default function PracticePage() {
               onClick={() => setCount(count + 1)}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600"
             >
-              ＋ 1
+            + 1
+            </button>
+            <button
+            onClick={() => setCount(count + 2)}
+            className="px-4 py-2 bg-red-300 text-white rounded-lg font-bold hover:bg-red-400"
+            > + 2
             </button>
           </div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-          <code>{`const [count, setCount] = useState(0)`}<br /><br />
-          {`// NG: 普通の変数は画面に反映されない`}<br />
+        <div>
+          <p>時間を入力してください(0時〜23時)</p>
+          <input className = 'border border-gray-300 rouded px-2 py-1 w-20'
+          type = "number"
+          value={hour}
+          onChange={(e) => setHour(e.target.value)}/>
+         <p className= "font- bold">{greeting}</p>
+
+         <div>
+          <p>数字を入力してください(1〜5)</p>
+          <input type="number" value={mood}
+          className="border border-gray-200"
+          onChange={(e) => setMoodMessage(e.target.value)}/>
+          <p>{moodMessage}</p>
+         </div>
+    
+        </div>
+        <div className="bg-blue-100 border border-blue-800 rounded p-3 text-sb text-blue-800">
+          <code>{'const [count, setCount] = useState(0)'}<br /><br />
+          {"// NG: 普通の変数は画面に反映されない"}<br />
           {`let count = 0`}<br />
           {`count = count + 1  // 画面は変わらない`}<br /><br />
           {`// OK: setCount を使うと画面が更新される`}<br />

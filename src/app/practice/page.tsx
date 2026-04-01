@@ -72,7 +72,7 @@ export default function PracticePage() {
   useEffect(() =>{
     const h =parseInt(hour)
     if(isNaN(h)){
-      setGreeting('時間を入力してください')
+      setGreeting('挨拶がここに表示されます')
     }else if (h >= 5 && h < 11){
       setGreeting('おはようございます')
     }else if (h > 11 && h < 18){
@@ -83,7 +83,7 @@ export default function PracticePage() {
   },[hour])
 
   const [mood, setMood] = useState('')
-  const [moodMessage, setMoodMessage] = useState('数字を入力してください')
+  const [moodMessage, setMoodMessage] = useState('感情を数字を入力してください')
   useEffect(() =>{
     const m = parseInt(mood)
     if(m === 1){
@@ -100,6 +100,59 @@ export default function PracticePage() {
       setMoodMessage('1〜5の数字を入力してください')
     }},[mood])
 
+    const [name1, setName1] = useState('〇〇')
+
+    const [count1, setCount1] = useState(0)
+    const [liked, setLiked] = useState(true)
+    // --- いいねボタン ---
+    const handleLike = () => {
+    setCount1(count1 + 1)
+    }
+
+    const [food, setFood] = useState('〇〇')
+
+    const [conversation, setConversation] = useState('挨拶を表示します')
+    const [starbutton, setStarButton] = useState(false)
+
+    const m = () =>{
+      if(starbutton){
+        setConversation('おはよう')
+        setStarButton(false)
+      }else{
+        setConversation('こんにちは')
+        setStarButton(true)
+      }
+    }
+
+  // 入力欄に天気を打つと「今日の天気は〇〇です」と表示される
+  const [weather,setWeather] = useState('〇〇')
+
+  // ライトのON/OFF お題： ボタンを押すと「💡 ON」と「🌑 OFF」が切り替わる
+  const [light, setLight] = useState('ボタンを押してください')
+  const [push , setPush] = useState(false)
+  const l = () =>{
+    if(push){
+      setLight('🌑 OFF')
+      setPush(false)
+    }else{
+      setLight('💡 ON')
+      setPush(true)
+    }
+  }
+
+  // 入力欄に色を打つと「好きな色は〇〇です」と表示される。さらに「赤」と打ったら「情熱
+  // 的ですね！」というメッセージも表示される
+
+  const [color ,setColor] = useState('〇〇')
+  const [dialog , setDialog] = useState('')
+
+  useEffect(() =>{
+    if(color === '赤'){
+      setDialog('情熱的ですね！')
+    }else{
+      setDialog('')
+    }
+  },[color])
   // --- 演算処理 ---
   const calculate = () => {
     const a = parseFloat(numA)
@@ -126,6 +179,7 @@ export default function PracticePage() {
   const removeTodo = (index: number) => {
     setTodos(todos.filter((_, i) => i !== index)) // 選んだindex以外を残す
   }
+
 // 変数を使った計算練習
       const price = 1000
       const tax = 0.1
@@ -286,11 +340,55 @@ export default function PracticePage() {
           <p>数字を入力してください(1〜5)</p>
           <input type="number" value={mood}
           className="border border-gray-200"
-          onChange={(e) => setMoodMessage(e.target.value)}/>
+          onChange={(e) => setMood(e.target.value)}/>
           <p>{moodMessage}</p>
          </div>
-    
+        
+        <div>
+          <p>名前の入力欄</p>
+          <input className="border border-gray-800" onChange={(e) => setName1(e.target.value)}></input>
+          <p>こんにちは、{name1}さん！</p>
         </div>
+
+        <div>
+          <button
+            onClick={handleLike}
+            className="px-4 py-2 rounded-lg font-bold text-white bg-red-400 hover:bg-red-500"
+          >
+            ❤️ {count1}
+          </button>
+        </div>
+        <div>
+          <p>入力欄</p>
+          <input className="border border-gray-200" onChange={(e) => setFood(e.target.value)}/>
+          <p>私の好きな食べ物は{food}です！</p>
+         </div>
+         <div>
+        <button onClick={m} className="px-4 py-2 bg-yellow-300 rounded">⭐️</button>
+        <p>{conversation}</p>
+        </div>
+        <div>
+          <p>入力欄</p>
+          <input className = "border border-gray-400" onChange={(e) => setWeather(e.target.value)}/>
+          <p>今日の天気は{weather}です！</p>
+        </div>
+
+        <div>
+        <button onClick = {l}>🔵</button>
+        <p>{light}</p>
+        </div>
+
+        <div>
+          <p>入力欄</p>
+          <input className="border border-gray-200" 
+          onChange = {(e) => {setColor(e.target.value)
+          }}/>
+        <p>好きな色は{color}です</p>
+        <p>{dialog}</p>
+        </div>
+
+        </div>
+
         <div className="bg-blue-100 border border-blue-800 rounded p-3 text-sb text-blue-800">
           <code>{'const [count, setCount] = useState(0)'}<br /><br />
           {"// NG: 普通の変数は画面に反映されない"}<br />

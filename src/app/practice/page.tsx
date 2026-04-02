@@ -34,6 +34,7 @@ function UserCard({ name, age, job }: { name: string; age: number; job: string }
     </div>
   )
 }
+// 情報を受け取る側
 
 // ================================
 // ③ メインページ
@@ -276,7 +277,7 @@ export default function PracticePage() {
         <div className="space-y-10">
           <UserCard name="松岡さん" age={25} job="エンジニア" />
           <UserCard name="田中さん" age={30} job="デザイナー" />
-          <UserCard name="杉野さん" age={29} job="俳優" />
+          <UserCard name="中野さん" age={29} job="漁師" />
         </div>
         <div className="bg-blue-50 border border-blue-400 rounded p-3 text-sm text-blue-800">
           <code>{`// コンポーネントを定義する`}<br />
@@ -354,8 +355,7 @@ export default function PracticePage() {
           <button
             onClick={handleLike}
             className="px-4 py-2 rounded-lg font-bold text-white bg-red-400 hover:bg-red-500"
-          >
-            ❤️ {count1}
+          >❤️ {count1}
           </button>
         </div>
         <div>

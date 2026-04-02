@@ -82,26 +82,30 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
         {diary.content}
       </p>
 
-      {/* AIサマリー（ミント色） */}
+      {/* AIサマリー */}
       {diary.analysis?.summary && (
-        <p className="text-sm text-teal-600 leading-relaxed">
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--theme-600)' }}>
           {diary.analysis.summary}
         </p>
       )}
 
-      {/* タグ + 感情分析（全てミント色） */}
+      {/* タグ + 感情分析 */}
       {(tags.length > 0 || primaryEmotion) && (
         <div className="flex flex-wrap gap-1 pt-1">
           {tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs px-2 py-0.5 rounded-full bg-teal-50 text-teal-600 border border-teal-400"
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-400)' }}
             >
               {tag}
             </span>
           ))}
           {primaryEmotion && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-teal-50 text-teal-600 border border-teal-400">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-400)' }}
+            >
               {primaryEmotion}
             </span>
           )}
@@ -113,7 +117,8 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
         <div className="pt-1 border-t border-gray-100">
           <button
             onClick={handleToggleFeedback}
-            className="flex items-center gap-1 text-xs text-teal-500 hover:text-teal-700 transition-colors"
+            className="flex items-center gap-1 text-xs transition-colors"
+            style={{ color: 'var(--theme-600)' }}
           >
             {feedbackOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             過去の自分からのメッセージ
@@ -123,12 +128,12 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
             <div className="mt-3">
               {feedbackLoading ? (
                 <div className="space-y-2 animate-pulse">
-                  <div className="h-3 bg-teal-100 rounded w-full" />
-                  <div className="h-3 bg-teal-100 rounded w-4/5" />
-                  <div className="h-3 bg-teal-100 rounded w-3/5" />
+                  <div className="h-3 rounded w-full" style={{ backgroundColor: 'var(--theme-pulse)' }} />
+                  <div className="h-3 rounded w-4/5" style={{ backgroundColor: 'var(--theme-pulse)' }} />
+                  <div className="h-3 rounded w-3/5" style={{ backgroundColor: 'var(--theme-pulse)' }} />
                 </div>
               ) : feedbackData ? (
-                <p className="text-sm text-teal-600 leading-loose">{feedbackData.feedback}</p>
+                <p className="text-sm leading-loose" style={{ color: 'var(--theme-600)' }}>{feedbackData.feedback}</p>
               ) : (
                 <p className="text-xs text-gray-400">フィードバックを取得できませんでした</p>
               )}

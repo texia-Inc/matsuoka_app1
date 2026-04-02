@@ -72,24 +72,18 @@ export function FeedbackPanel() {
 
   if (!data) return null
 
-  // 色の変更はここだけ: 案A=purple, 案B=teal
-  const theme = {
-    bg: 'bg-teal-50',
-    border: 'border-teal-100',
-    title: 'text-teal-700',
-    body: 'text-teal-700',
-    link: 'text-teal-400',
-    cardBorder: 'border-teal-400',
-  }
-
   return (
-    <div className={`rounded-2xl ${theme.bg} border border-teal-300 px-6 py-5 space-y-4`}>
-      <p className={`text-sm font-semibold ${theme.title}`}>過去の自分からのメッセージ</p>
-      <p className={`text-sm leading-loose ${theme.body}`}>{data.feedback}</p>
+    <div
+      className="rounded-2xl px-6 py-5 space-y-4 border"
+      style={{ backgroundColor: 'var(--theme-50)', borderColor: 'var(--theme-300)' }}
+    >
+      <p className="text-sm font-semibold" style={{ color: 'var(--theme-700)' }}>過去の自分からのメッセージ</p>
+      <p className="text-sm leading-loose" style={{ color: 'var(--theme-700)' }}>{data.feedback}</p>
       {data.similar_entries.length > 0 && (
         <div>
           <button
-            className={`text-xs ${theme.link} underline`}
+            className="text-xs underline"
+            style={{ color: 'var(--theme-400)' }}
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? '閉じる' : `参考にした過去の記録（${data.similar_entries.length}件）を見る`}
@@ -97,7 +91,11 @@ export function FeedbackPanel() {
           {expanded && (
             <div className="mt-3 space-y-2">
               {data.similar_entries.map((entry) => (
-                <div key={entry.id} className={`rounded-xl border ${theme.cardBorder} bg-white px-3 py-2 text-xs`}>
+                <div
+                  key={entry.id}
+                  className="rounded-xl border bg-white px-3 py-2 text-xs"
+                  style={{ borderColor: 'var(--theme-400)' }}
+                >
                   <div className="flex justify-between text-gray-400 mb-1">
                     <span>{format(new Date(entry.created_at), 'yyyy年M月d日', { locale: ja })}</span>
                     <span>類似度 {(entry.similarity * 100).toFixed(0)}%</span>

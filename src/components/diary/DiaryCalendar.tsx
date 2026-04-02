@@ -44,7 +44,7 @@ export function DiaryCalendar({ onSelectDay }: DiaryCalendarProps) {
 
   const days: Date[] = []
   let day = calStart
-  while (day <= calEnd) {
+  while (days.length < 42) {
     days.push(day)
     day = addDays(day, 1)
   }

@@ -2,6 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme color variables ── */
+:root, [data-theme="mint"] {
+  --theme-50: #f0fdfa;
+  --theme-300: #5eead4;
+  --theme-400: #2dd4bf;
+  --theme-600: #0d9488;
+  --theme-700: #0f766e;
+  --theme-pulse: #99f6e4;
+}
+
+[data-theme="lavender"] {
+  --theme-50: #faf5ff;
+  --theme-300: #d8b4fe;
+  --theme-400: #c084fc;
+  --theme-600: #9333ea;
+  --theme-700: #7e22ce;
+  --theme-pulse: #e9d5ff;
+}
+
+[data-theme="sand"] {
+  --theme-50: #fffbeb;
+  --theme-300: #fcd34d;
+  --theme-400: #fbbf24;
+  --theme-600: #b45309;
+  --theme-700: #92400e;
+  --theme-pulse: #fde68a;
+}
+
+[data-theme="slate"] {
+  --theme-50: #f8fafc;
+  --theme-300: #cbd5e1;
+  --theme-400: #94a3b8;
+  --theme-600: #475569;
+  --theme-700: #334155;
+  --theme-pulse: #e2e8f0;
+}
+
+[data-theme="cherry"] {
+  --theme-50: #fff1f2;
+  --theme-300: #fda4af;
+  --theme-400: #fb7185;
+  --theme-600: #e11d48;
+  --theme-700: #be123c;
+  --theme-pulse: #fecdd3;
+}
+
+[data-theme="sky"] {
+  --theme-50: #f0f9ff;
+  --theme-300: #7dd3fc;
+  --theme-400: #38bdf8;
+  --theme-600: #0284c7;
+  --theme-700: #0369a1;
+  --theme-pulse: #bae6fd;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

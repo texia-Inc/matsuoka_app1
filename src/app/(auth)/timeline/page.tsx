@@ -21,7 +21,7 @@ export default function TimelinePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="絞り込む..."
-            className="w-48 rounded-xl border border-gray-300 bg-white pl-8 pr-3 py-1.5 text-sm outline-none"
+            className="w-64 rounded-xl border border-gray-300 bg-white pl-8 pr-3 py-1.5 text-sm outline-none"
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { ProfileMenu } from '@/components/diary/ProfileMenu'
 
 export default async function AuthLayout({
   children,
@@ -15,35 +15,39 @@ export default async function AuthLayout({
     redirect('/auth/login')
   }
 
-  const handleSignOut = async () => {
-    'use server'
-    const supabase = await createClient()
-    await supabase.auth.signOut()
-    redirect('/auth/login')
-  }
+  const { count } = await supabase
+    .from('diaries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  const displayName = user.user_metadata?.full_name ?? ''
+  const avatarUrl = user.user_metadata?.avatar_url ?? null
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white px-4 py-3">
-        <div className="mx-auto flex max-w-2xl items-center justify-between">
-          <Link href="/dashboard" className="text-lg font-bold text-gray-900">
-            AI日記
+      <header className="border-b bg-white py-3">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-4">
+          <Link href="/dashboard" className="text-2xl font-bold text-gray-900">
+            My日記
           </Link>
           <nav className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
-              ホーム
-            </Link>
             <Link href="/timeline" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
               タイムライン
             </Link>
-            <form action={handleSignOut}>
-              <button
-                type="submit"
-                className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors"
-              >
-                ログアウト
-              </button>
-            </form>
+            <Link href="/report" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
+              レポート
+            </Link>
+            <Link href="/goals" className="text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1 hover:bg-gray-100 transition-colors">
+              目標
+            </Link>
+            <ProfileMenu
+              email={user.email ?? ''}
+              initialName={displayName}
+              initialAvatarUrl={avatarUrl}
+              diaryCount={count ?? 0}
+              memberSince={user.created_at}
+              userId={user.id}
+            />
           </nav>
         </div>
       </header>

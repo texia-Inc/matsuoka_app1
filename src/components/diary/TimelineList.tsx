@@ -55,7 +55,7 @@ export function TimelineList({ query = '' }: TimelineListProps) {
         years.map((year) => (
           <div key={year} className="space-y-3">
             {/* 年見出し */}
-            <p className="text-lg font-medium text-gray-400 border-b border-gray-200 pb-2">{year}年</p>
+            <p className="text-lg font-medium text-gray-500 border-b border-gray-200 pb-2">{year}年</p>
             {grouped[year].map((diary) => (
               <DiaryCard key={diary.id} diary={diary} variant="glass" />
             ))}

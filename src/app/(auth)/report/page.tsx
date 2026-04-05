@@ -111,22 +111,46 @@ function ViewTab({ mode, onChange, disableMonth, monthLabel }: {
   )
 }
 
+// 件数に応じて背景色を段階的に深化（0件=gray-100 → 多いほど gray-600〜700 寄りに）
+function barBg(count: number): string {
+  const levels = ['#F3F4F6', '#D1D5DB', '#9CA3AF', '#6B7280', '#4B5563', '#374151']
+  return levels[Math.min(count, levels.length - 1)]
+}
+
+const STEP_PX = 20 // 1件ごとに増えるバー幅（px）
+
 // ── 気分分布（最高→辛い順） ───────────────────────────────────
 function MoodDist({ dist }: { dist: number[] }) {
-  const maxVal = Math.max(...dist, 1)
+  const [openId, setOpenId] = useState<number | null>(null)
   return (
     <div className="space-y-3">
       {[...MOODS].reverse().map((mood) => {
         const i = mood.value - 1
+        const count = dist[i]
+        const isOpen = openId === mood.value
         return (
           <div key={mood.value} className="flex items-center gap-3">
             <div className="w-8 h-8 shrink-0" style={{ color: mood.color }}>{mood.face}</div>
             <span className="text-xs text-gray-500 w-14 shrink-0">{mood.label}</span>
-            <div className="flex-1 bg-gray-100 rounded-full h-2.5">
-              <div className="h-2.5 rounded-full transition-all duration-500"
-                style={{ width: `${(dist[i] / maxVal) * 100}%`, backgroundColor: mood.color }} />
+            <div className="relative flex-1 group">
+              <div
+                className="rounded-full h-2.5 bg-gray-100 overflow-hidden cursor-pointer"
+                onClick={() => setOpenId(isOpen ? null : mood.value)}
+              >
+                <div className="h-2.5 rounded-full transition-all duration-500"
+                  style={{ width: `min(${count * STEP_PX}px, 100%)`, backgroundColor: '#9CA3AF' }} />
+              </div>
+              {/* ツールチップ: hover（PC）またはタップ（スマホ）で表示 */}
+              <div className={[
+                'absolute left-0 -top-8 z-20 pointer-events-none',
+                'bg-gray-800 text-white text-xs rounded-lg px-2 py-1 whitespace-nowrap shadow-md',
+                'transition-opacity duration-150',
+                isOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+              ].join(' ')}>
+                {count}件
+                <span className="absolute left-3 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
+              </div>
             </div>
-            <span className="text-xs text-gray-400 w-5 text-right">{dist[i]}</span>
           </div>
         )
       })}
@@ -149,10 +173,10 @@ function Keywords({ overall, selected, monthLabel }: {
         <div className="flex flex-wrap gap-2">
           {list.map(({ tag, count }) => (
             <span key={tag}
-              className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-gray-200 bg-white text-gray-500"
+              className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-gray-200 bg-white text-gray-800"
             >
               {tag}
-              <span className="text-xs rounded-full px-1.5 font-semibold bg-gray-200 text-gray-700">{count}</span>
+              <span className="text-xs rounded-full px-1.5 font-semibold bg-gray-500 text-white">{count}</span>
             </span>
           ))}
         </div>
@@ -163,7 +187,6 @@ function Keywords({ overall, selected, monthLabel }: {
 
 // ── いつ記録しているか ────────────────────────────────────────
 function RecordingTime({ data }: { data: RadarItem[] }) {
-  const maxCount = Math.max(...data.map((d) => d.count), 1)
   return (
     <div className="space-y-3">
       {TIME_SLOTS.map((slot, i) => {
@@ -175,9 +198,9 @@ function RecordingTime({ data }: { data: RadarItem[] }) {
               <span className="font-semibold">{slot.label}</span>
               <span className="text-gray-400 ml-1">{slot.sub}</span>
             </span>
-            <div className="flex-1 bg-gray-100 rounded-full h-2.5">
+            <div className="flex-1 rounded-full h-2.5 bg-gray-100 overflow-hidden">
               <div className="h-2.5 rounded-full transition-all duration-500"
-                style={{ width: `${(count / maxCount) * 100}%`, backgroundColor: '#4B5563' }} />
+                style={{ width: `min(${count * STEP_PX}px, 100%)`, backgroundColor: '#9CA3AF' }} />
             </div>
             <span className="text-sm font-medium text-gray-600 w-8 text-right">{count}件</span>
           </div>
@@ -254,40 +277,32 @@ export default function ReportPage() {
         <>
           {/* タブ付きカード */}
           <div>
-            {/* タブ */}
-            <div className="flex">
+            {/* タブ行 */}
+            <div className="flex items-end">
               {([['mood', '気分の分布'], ['time', 'いつ記録しているか']] as const).map(([t, label]) => (
                 <button key={t} onClick={() => setMainTab(t)}
                   className={[
-                    'text-xs px-5 py-2 font-medium border border-gray-300 transition-colors first:rounded-tl-2xl last:rounded-tr-2xl',
+                    'text-xs px-5 transition-colors',
                     mainTab === t
-                      ? 'bg-white text-gray-900 border-b-white -mb-px z-10 relative'
-                      : 'bg-gray-50 text-gray-500 hover:text-gray-700',
+                      ? 'rounded-t-2xl bg-white border border-gray-300 [border-bottom:2px_solid_black] pt-3 pb-2.5 font-bold text-black -mb-px z-10'
+                      : 'rounded-t-xl bg-gray-50 border border-gray-200 py-2 font-medium text-gray-400 hover:text-gray-500 self-end',
                   ].join(' ')}
                 >
                   {label}
                 </button>
               ))}
-              <div className="flex-1 border-b border-gray-300" />
+              <div className="flex-1 border-b border-gray-300 self-end" />
             </div>
 
+            {/* コンテンツ枠 */}
             {mainTab === 'mood' && (
-              <>
-                {/* 気分の分布 */}
-                <div className="rounded-b-2xl rounded-tr-2xl border border-t-0 border-gray-300 bg-white px-5 py-5 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <p className="text-sm font-semibold text-gray-700">気分の分布</p>
-                    <ViewTab mode={moodTab} onChange={setMoodTab} disableMonth={!selected} monthLabel={monthLabel} />
-                  </div>
-                  <MoodDist dist={moodDist} />
+              <div className="rounded-b-2xl rounded-tr-2xl border border-t-0 border-gray-300 bg-white px-5 py-5 space-y-3">
+                <div className="flex items-center gap-3">
+                  <p className="text-sm font-semibold text-gray-700">気分の分布</p>
+                  <ViewTab mode={moodTab} onChange={setMoodTab} disableMonth={!selected} monthLabel={monthLabel} />
                 </div>
-
-                {/* キーワード */}
-                <div className="rounded-2xl border border-gray-300 bg-white px-5 py-5 space-y-3 mt-4">
-                  <p className="text-sm font-semibold text-gray-700">よく出るキーワード</p>
-                  <Keywords overall={overall!.tags} selected={selected?.tags ?? null} monthLabel={monthLabel} />
-                </div>
-              </>
+                <MoodDist dist={moodDist} />
+              </div>
             )}
 
             {mainTab === 'time' && (
@@ -297,6 +312,14 @@ export default function ReportPage() {
               </div>
             )}
           </div>
+
+          {/* キーワード（気分タブのみ） */}
+          {mainTab === 'mood' && (
+            <div className="rounded-2xl border border-gray-300 bg-white px-5 py-5 space-y-3">
+              <p className="text-sm font-semibold text-gray-700">よく出るキーワード</p>
+              <Keywords overall={overall!.tags} selected={selected?.tags ?? null} monthLabel={monthLabel} />
+            </div>
+          )}
         </>
       )}
     </div>

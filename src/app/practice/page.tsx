@@ -204,9 +204,51 @@ export default function PracticePage() {
       const num4:number = 11
       const practice6 = "⑥useState を使って、入力した数字の消費税込み価格をリアルタイムで表示する"
       const [price1,setPrice] = useState(0)
+ 
+      type Item = {
+        name: string;
+        quantity: number;
+        price: number;
+        };
+     
+      const [items, setItems] = useState<Record<string, Item>>({
+        item1: { name: 'Apple', quantity: 10 ,price: 200},
+        item2: { name: 'Banana', quantity: 5 ,price: 150 },
+        item3: { name: 'Cherry', quantity: 20 ,price: 180},
+      })
+
+      const addItem = () => {
+        const newItem = { name: 'Date', quantity: 15 ,price: 300};
+        setItems(prevItems => ({
+          ...prevItems,
+          item4: newItem 
+        }));
+      };
+
   return (
+    
     <div className="max-w-2xl mx-auto p-6 space-y-10">
       <h1 className="text-2xl font-bold text-gray-900">React 基礎練習</h1>
+
+      <div>
+      <p>{items['item1'].name} : {items.item1.quantity} : {items.item1.price}</p>
+      <p>{items.item2.name} : {items.item2.quantity} : {items.item2.price}</p>
+      <p>{items.item3.name} : {items.item3.quantity} : {items.item3.price}</p>
+    </div>
+
+    <div>
+      <h1>Item List</h1>
+      <ul>
+        {Object.keys(items).map(key => (
+          <li key={key}>
+            {items[key].name}: {items[key].quantity}
+             {key}
+          </li>
+        ))}
+      </ul>
+      <button onClick={addItem}>Add Item</button>
+    </div>
+
 
       {/* ======================================
           セクション1: JSX と式の埋め込み
@@ -244,6 +286,8 @@ export default function PracticePage() {
           <p>{practice3}<br/><span>割り算：{100/7}<br/>余り：{100%7}</span></p>
           <p>{practice4}<br/>合計：{array_total}<br/>平均：{array_average}</p>
           <p>{practice5}<br/>{num3>num4?`${num3}が大きい`:`${num4}が大きい`}</p>
+
+
           <div>
             <p>{practice6}</p>
             <div className="flex items-center gap-2">

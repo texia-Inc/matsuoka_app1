@@ -88,6 +88,7 @@ const [product, setProduct] = useState<Record<string, Product>>({
 
 const addQuantity = (key : string) => {
   setProduct(prev =>({
+    // 他の商品はそのまま残す
   ...prev,
   [key]:{...prev[key], quantity:prev[key].quantity+1}
   })) 

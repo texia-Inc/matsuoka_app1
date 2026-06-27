@@ -17,13 +17,18 @@ export async function GET(
 
   const { data: diary, error } = await supabase
     .from('diaries')
-    .select('id, content, mood_score, analysis, created_at, embedding')
+    .select('id, content, mood_score, analysis, created_at, embedding, feedback')
     .eq('id', id)
     .eq('user_id', user.id)
     .single()
 
   if (error || !diary) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
+  // 保存済みフィードバックがあればそのまま返す
+  if (diary.feedback) {
+    return NextResponse.json({ feedback: diary.feedback, similar_entries: [] })
   }
 
   if (!diary.embedding) {
@@ -43,7 +48,10 @@ export async function GET(
   }
 
   const past = (similarEntries || []) as SimilarDiary[]
+
+  // フィードバック生成してDBに保存
   const feedback = await generateFeedback(diary as unknown as import('@/lib/types').Diary, past)
+  await supabase.from('diaries').update({ feedback }).eq('id', diary.id)
 
   return NextResponse.json({
     feedback,

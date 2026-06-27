@@ -163,11 +163,13 @@ function Keywords({ overall, selected, monthLabel }: {
   overall: TagItem[]; selected: TagItem[] | null; monthLabel: string
 }) {
   const [tab, setTab] = useState<ViewMode>('month')
-  const list = tab === 'month' && selected ? selected : overall
+  const list = tab === 'month' ? (selected ?? []) : overall
   return (
     <div className="space-y-3">
-      <ViewTab mode={tab} onChange={setTab} disableMonth={!selected} monthLabel={monthLabel} />
-      {list.length === 0 ? (
+      <ViewTab mode={tab} onChange={setTab} disableMonth={false} monthLabel={monthLabel} />
+      {tab === 'month' && selected === null ? (
+        <p className="text-xs text-gray-400">この月の記録はありません</p>
+      ) : list.length === 0 ? (
         <p className="text-xs text-gray-400">データがありません</p>
       ) : (
         <div className="flex flex-wrap gap-2">
@@ -258,12 +260,12 @@ export default function ReportPage() {
         {hasData && (
           <div className="flex gap-2 shrink-0">
             <div className="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-center w-32">
-              <p className="text-lg font-bold text-gray-900">{overall!.days_since_start}日目</p>
               <p className="text-xs text-gray-400">記録開始から</p>
+              <p className="text-lg font-bold text-gray-900">{overall!.days_since_start}日目</p>
             </div>
             <div className="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-center w-32">
-              <p className="text-lg font-bold text-gray-900">{overall!.total}件</p>
               <p className="text-xs text-gray-400">日記合計</p>
+              <p className="text-lg font-bold text-gray-900">{overall!.total}件</p>
             </div>
           </div>
         )}
@@ -299,9 +301,13 @@ export default function ReportPage() {
               <div className="rounded-b-2xl rounded-tr-2xl border border-t-0 border-gray-300 bg-white px-5 py-5 space-y-3">
                 <div className="flex items-center gap-3">
                   <p className="text-sm font-semibold text-gray-700">気分の分布</p>
-                  <ViewTab mode={moodTab} onChange={setMoodTab} disableMonth={!selected} monthLabel={monthLabel} />
+                  <ViewTab mode={moodTab} onChange={setMoodTab} disableMonth={false} monthLabel={monthLabel} />
                 </div>
-                <MoodDist dist={moodDist} />
+                {moodTab === 'month' && !selected ? (
+                  <p className="text-xs text-gray-400">この月の記録はありません</p>
+                ) : (
+                  <MoodDist dist={moodDist} />
+                )}
               </div>
             )}
 

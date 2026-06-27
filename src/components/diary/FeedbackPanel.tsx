@@ -77,7 +77,7 @@ export function FeedbackPanel() {
       className="rounded-2xl px-6 py-5 space-y-4 border"
       style={{ backgroundColor: 'var(--theme-50)', borderColor: 'var(--theme-300)' }}
     >
-      <p className="text-sm font-semibold" style={{ color: 'var(--theme-700)' }}>過去の自分からのメッセージ</p>
+      <p className="text-sm font-semibold" style={{ color: 'var(--theme-700)' }}>今日のひとこと</p>
       <p className="text-sm leading-loose" style={{ color: 'var(--theme-700)' }}>{data.feedback}</p>
       {data.similar_entries.length > 0 && (
         <div>

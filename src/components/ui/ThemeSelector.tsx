@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 const THEMES = [
   { id: 'mint',     label: 'ミント',     color: '#2dd4bf' },
   { id: 'lavender', label: 'ラベンダー', color: '#c084fc' },
-  { id: 'sand',     label: 'サンド',     color: '#fbbf24' },
+  { id: 'sand',     label: 'サンド',     color: '#fb923c' },
   { id: 'cherry',   label: 'チェリー',   color: '#fb7185' },
   { id: 'sky',      label: 'スカイ',     color: '#38bdf8' },
   { id: 'slate',    label: 'スレート',   color: '#94a3b8' },

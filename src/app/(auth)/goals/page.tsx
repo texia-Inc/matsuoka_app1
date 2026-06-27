@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { AlertCircle, Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Goal {
   id: string
@@ -14,56 +15,68 @@ interface Goal {
 }
 
 function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void }) {
-  const [open, setOpen] = useState(false)
+  const isCurrentMonth = goal.year_month === format(new Date(), 'yyyy-MM')
+  const [open, setOpen] = useState(isCurrentMonth)
   const [editGoal, setEditGoal] = useState(goal.goal)
   const [editReflection, setEditReflection] = useState(goal.reflection)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
-  const isCurrentMonth = goal.year_month === format(new Date(), 'yyyy-MM')
   const label = format(new Date(`${goal.year_month}-01`), 'yyyy年M月', { locale: ja })
 
   const handleSave = async () => {
     setSaving(true)
-    const res = await fetch('/api/goals', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ year_month: goal.year_month, goal: editGoal, reflection: editReflection }),
-    })
-    const data = await res.json()
-    if (!data.error) {
-      onUpdate(data)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
+    try {
+      const res = await fetch('/api/goals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year_month: goal.year_month, goal: editGoal, reflection: editReflection }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        toast.error(`保存に失敗しました: ${data.error}`)
+      } else {
+        onUpdate(data)
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      }
+    } catch {
+      toast.error('保存に失敗しました')
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
   }
 
   return (
     <div className="rounded-2xl border border-gray-300 bg-white overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-gray-800">{label}</span>
-          {isCurrentMonth && (
+      {isCurrentMonth ? (
+        <div className="w-full flex items-center justify-between px-5 py-4">
+          <div className="flex items-center gap-3">
+            <span className="text-base font-semibold text-gray-800">{label}</span>
             <span
               className="text-xs px-2 py-0.5 rounded-full"
               style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)' }}
             >
               今月
             </span>
-          )}
-          {goal.goal && <span className="text-xs text-gray-400 truncate max-w-[160px]">{goal.goal}</span>}
+          </div>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
-      </button>
+      ) : (
+        <button
+          onClick={() => setOpen(!open)}
+          className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-base font-semibold text-gray-800">{label}</span>
+          </div>
+          {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+        </button>
+      )}
 
       {open && (
         <div className="px-5 pb-5 space-y-4 border-t border-gray-100">
           <div className="pt-4 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500">今月の目標</label>
+            <label className="text-sm font-medium text-gray-500">今月の目標</label>
             <textarea
               value={editGoal}
               onChange={(e) => setEditGoal(e.target.value)}
@@ -74,7 +87,7 @@ function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void 
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500">振り返り</label>
+            <label className="text-sm font-medium text-gray-500">振り返り</label>
             <textarea
               value={editReflection}
               onChange={(e) => setEditReflection(e.target.value)}
@@ -84,14 +97,19 @@ function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void 
             />
           </div>
 
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-1.5 rounded-lg transition-colors"
-            style={{ backgroundColor: saved ? '#22c55e' : 'var(--theme-600)' }}
-          >
-            {saved ? <><Check className="w-3.5 h-3.5" />保存しました</> : saving ? '保存中...' : '保存する'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="text-sm font-medium text-white px-4 py-1.5 rounded-lg transition-colors"
+              style={{ backgroundColor: 'var(--theme-600)' }}
+            >
+              {saving ? '保存中...' : '保存する'}
+            </button>
+            {saved && (
+              <Check className="w-4 h-4" style={{ color: 'var(--theme-600)' }} />
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -103,6 +121,9 @@ export default function GoalsPage() {
   const [loading, setLoading] = useState(true)
 
   const currentMonth = format(new Date(), 'yyyy-MM')
+  const today = new Date()
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+  const showReminder = lastDayOfMonth - today.getDate() < 7
 
   useEffect(() => {
     fetch('/api/goals')
@@ -142,6 +163,17 @@ export default function GoalsPage() {
         <h1 className="text-2xl font-bold text-gray-900">目標・振り返り</h1>
         <p className="text-sm text-gray-400 mt-1">月ごとに目標を立てて、月末に振り返りましょう</p>
       </div>
+
+      {showReminder && (
+        <div className="flex items-start gap-3 rounded-2xl border px-4 py-3"
+          style={{ backgroundColor: 'var(--theme-50)', borderColor: 'var(--theme-300)' }}
+        >
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: 'var(--theme-600)' }} />
+          <p className="text-sm" style={{ color: 'var(--theme-700)' }}>
+            今月もあと少しです。今月の振り返りを記録しておきましょう。
+          </p>
+        </div>
+      )}
 
       <div className="space-y-3">
         {goals.map((goal) => (

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
   const { data: todayDiary, error: todayError } = await supabase
     .from('diaries')
-    .select('id, content, mood_score, analysis, created_at, embedding')
+    .select('id, content, mood_score, analysis, created_at, embedding, feedback')
     .eq('user_id', user.id)
     .gte('created_at', todayStart.toISOString())
     .lte('created_at', todayEnd.toISOString())
@@ -34,6 +34,15 @@ export async function GET(request: NextRequest) {
       { error: '今日の日記がまだありません' },
       { status: 404 }
     )
+  }
+
+  // 保存済みフィードバックがあればそのまま返す
+  if (todayDiary.feedback) {
+    return NextResponse.json({
+      feedback: todayDiary.feedback,
+      today: { id: todayDiary.id, content: todayDiary.content, mood_score: todayDiary.mood_score, created_at: todayDiary.created_at },
+      similar_entries: [],
+    })
   }
 
   if (!todayDiary.embedding) {
@@ -61,8 +70,9 @@ export async function GET(request: NextRequest) {
 
   const past = (similarEntries || []) as SimilarDiary[]
 
-  // フィードバック生成
+  // フィードバック生成してDBに保存
   const feedback = await generateFeedback(todayDiary as unknown as import('@/lib/types').Diary, past)
+  await supabase.from('diaries').update({ feedback }).eq('id', todayDiary.id)
 
   return NextResponse.json({
     feedback,

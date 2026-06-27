@@ -82,12 +82,6 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
         {diary.content}
       </p>
 
-      {/* AIサマリー */}
-      {diary.analysis?.summary && (
-        <p className="text-sm leading-relaxed" style={{ color: 'var(--theme-600)' }}>
-          {diary.analysis.summary}
-        </p>
-      )}
 
       {/* タグ + 感情分析 */}
       {(tags.length > 0 || primaryEmotion) && (
@@ -96,7 +90,7 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
             <span
               key={tag}
               className="text-xs px-2 py-0.5 rounded-full border"
-              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-400)' }}
+              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-300)' }}
             >
               {tag}
             </span>
@@ -104,7 +98,7 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
           {primaryEmotion && (
             <span
               className="text-xs px-2 py-0.5 rounded-full border"
-              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-400)' }}
+              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-300)' }}
             >
               {primaryEmotion}
             </span>
@@ -121,7 +115,7 @@ export function DiaryCard({ diary, variant = 'default' }: DiaryCardProps) {
             style={{ color: 'var(--theme-600)' }}
           >
             {feedbackOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            過去の自分からのメッセージ
+            今日のひとこと
           </button>
 
           {feedbackOpen && (

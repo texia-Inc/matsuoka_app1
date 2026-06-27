@@ -71,7 +71,6 @@ export function DiaryForm({ date, diary, onSaved }: DiaryFormProps) {
     reset()
     setMood(3)
     onSaved?.()
-    router.refresh()
   }
 
   return (

@@ -3,19 +3,39 @@ import type { Diary, SimilarDiary } from '@/lib/types'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
-const FEEDBACK_PROMPT = `あなたは「過去の自分」の視点から語りかけるAIです。
-今日の日記と、過去の似た状況の日記を比較して、温かく、具体的なフィードバックを150〜200文字で生成してください。
-成長したこと、繰り返しているパターン、または励ましのメッセージを伝えてください。`
+const FEEDBACK_PROMPT = `あなたは日記を読んで気づきをシェアしてくれる友達みたいなAIです。
+過去の似た日記と比較して、友達み��いなカジュアル���口調（だよ、だね、じゃない？など）で気づきを伝えてください。
+ルール：
+- 過去の記録の日付を使って「○ヶ月前も同じこと書いてたよ」「あの時の悩���、解決したじゃん���」のように具体���な時期に触れる
+- 繰り返しているパターンや��長・変化を自然に指摘する
+- 読み返したくなるような、ちょっとハッとする内容にする
+- 100〜150文字程度で短くまとめる`
 
 export async function generateFeedback(
   today: Diary,
   pastEntries: SimilarDiary[]
 ): Promise<string> {
+  const todayDate = format(new Date(today.created_at), 'yyyy年M月d日', { locale: ja })
+
   if (pastEntries.length === 0) {
-    return 'まだ過去のデータが少ないですが、書き続けることで過去の自分と対話できるようになります。今日も記録してくれてありがとう。'
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: `あなたは日記を読んで気づきをシェアしてくれる友達みたいなAIです。今日の日記を読んで、友達みたいなカジュアルな口調��だよ、だね、じゃない？など）で短い気づきを伝えてください。100〜150文字程度で、明日も書きたくなるようなひとことにしてく���さい。`,
+        },
+        {
+          role: 'user',
+          content: `今日の日記（${todayDate}）:\n${today.content}\n気分スコア: ${today.mood_score}/5`,
+        },
+      ],
+      max_tokens: 250,
+      temperature: 0.85,
+    })
+    return response.choices[0].message.content!
   }
 
-  const todayDate = format(new Date(today.created_at), 'yyyy年M月d日', { locale: ja })
   const pastText = pastEntries
     .map((e) => {
       const date = format(new Date(e.created_at), 'yyyy年M月d日', { locale: ja })
@@ -28,17 +48,17 @@ export async function generateFeedback(
 ${today.content}
 気分スコア: ${today.mood_score}/5
 
-参考にした過去の記録:
+過去の似た記録:
 ${pastText}`
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     messages: [
       { role: 'system', content: FEEDBACK_PROMPT },
       { role: 'user', content: userMessage },
     ],
-    max_tokens: 400,
-    temperature: 0.7,
+    max_tokens: 250,
+    temperature: 0.85,
   })
 
   return response.choices[0].message.content!

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { ThemeSelector } from '@/components/ui/ThemeSelector'
-import { Pencil, Check, X, LogOut, BookOpen, CalendarDays, Camera } from 'lucide-react'
+import { Pencil, Check, LogOut, BookOpen, CalendarDays, Camera } from 'lucide-react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import Image from 'next/image'
@@ -114,6 +114,7 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
       {/* ヘッダーのアバターボタン */}
       <button
         onClick={() => setOpen(!open)}
+        onContextMenu={(e) => e.preventDefault()}
         className="transition-opacity hover:opacity-80"
       >
         <Avatar size="sm" />
@@ -121,22 +122,22 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
 
       {/* ポップアップパネル */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl border border-gray-200 shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl border border-gray-300 shadow-xl z-50 overflow-hidden">
 
           {/* プロフィールヘッダー */}
-          <div className="px-5 py-5 flex flex-col items-center gap-2 border-b border-gray-100">
+          <div className="px-5 py-7 flex flex-col items-center gap-4 border-b border-gray-100">
 
-            {/* アバター（カメラオーバーレイ付き） */}
-            <div className="relative group">
+            {/* アバター（カメラボタン常時表示） */}
+            <div className="relative mb-2">
               <Avatar size="lg" />
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow"
               >
                 {uploading
-                  ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  : <Camera className="w-5 h-5 text-white" />
+                  ? <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  : <Camera className="w-3 h-3 text-white" />
                 }
               </button>
               <input
@@ -150,7 +151,7 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
 
             {/* 名前編集 */}
             {editingName ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-col items-center gap-4">
                 <input
                   autoFocus
                   value={nameInput}
@@ -158,15 +159,25 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
                   onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName() }}
                   className="text-sm font-semibold text-gray-900 text-center border-b border-gray-400 outline-none w-36"
                 />
-                <button onClick={handleSaveName} disabled={saving}>
-                  <Check className="w-4 h-4 text-green-500" />
-                </button>
-                <button onClick={() => { setEditingName(false); setNameInput(name) }}>
-                  <X className="w-4 h-4 text-gray-400" />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setEditingName(false); setNameInput(name) }}
+                    className="text-xs font-medium text-gray-500 px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-200 transition-colors"
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    onClick={handleSaveName}
+                    disabled={saving}
+                    className="text-xs font-medium text-white px-3 py-1 rounded-lg bg-gray-900 hover:bg-black transition-colors"
+                  >
+                    登録する
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-center gap-1.5">
+                <div className="w-3.5" />
                 <p className="text-sm font-semibold text-gray-900">{name || 'ユーザー'}</p>
                 <button onClick={() => { setEditingName(true); setNameInput(name) }}>
                   <Pencil className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 transition-colors" />
@@ -178,14 +189,14 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
           </div>
 
           {/* 統計 */}
-          <div className="px-5 py-3 flex gap-5 border-b border-gray-100">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>{diaryCount}件の日記</span>
-            </div>
+          <div className="px-5 py-4 flex gap-5 border-b border-gray-100">
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <CalendarDays className="w-3.5 h-3.5" />
               <span>{format(new Date(memberSince), 'yyyy年M月', { locale: ja })}から</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>{diaryCount}件の日記</span>
             </div>
           </div>
 

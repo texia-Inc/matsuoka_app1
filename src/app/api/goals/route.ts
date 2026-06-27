@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase
     .from('goals')
     .upsert(
-      { user_id: user.id, year_month, goal, reflection, updated_at: new Date().toISOString() },
+      { user_id: user.id, year_month, goal, reflection },
       { onConflict: 'user_id,year_month' }
     )
     .select()

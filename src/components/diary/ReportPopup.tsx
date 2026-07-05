@@ -110,9 +110,9 @@ export function ReportPopup({ onClose }: { onClose: () => void }) {
                   ))}
                 </div>
                 {kwTab === 'month' && data.selected === null ? (
-                  <p className="text-xs text-gray-400">この月の記録はありません</p>
+                  <p className="text-xs text-gray-600">この月の記録はありません</p>
                 ) : kwList !== null && kwList.length === 0 ? (
-                  <p className="text-xs text-gray-400">データがありません</p>
+                  <p className="text-xs text-gray-600">データがありません</p>
                 ) : (
                   <div className="overflow-y-auto flex-1 min-h-0">
                   <div className="flex flex-wrap gap-2">

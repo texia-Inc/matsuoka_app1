@@ -102,7 +102,7 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
     return (
       <div
         className={`${cls} flex items-center justify-center text-white`}
-        style={{ backgroundColor: 'var(--theme-600)' }}
+        style={{ backgroundColor: 'var(--theme-500)' }}
       >
         {initial}
       </div>
@@ -125,7 +125,7 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
         <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl border border-gray-300 shadow-xl z-50 overflow-hidden">
 
           {/* プロフィールヘッダー */}
-          <div className="px-5 py-7 flex flex-col items-center gap-4 border-b border-gray-100">
+          <div className="px-5 pt-7 pb-4 flex flex-col items-center gap-4 border-b border-gray-100">
 
             {/* アバター（カメラボタン常時表示） */}
             <div className="relative mb-2">
@@ -207,7 +207,7 @@ export function ProfileMenu({ email, initialName, initialAvatarUrl, diaryCount, 
           </div>
 
           {/* ログアウト */}
-          <div className="px-5 py-3">
+          <div className="px-6 py-4">
             <button
               onClick={handleSignOut}
               className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors"

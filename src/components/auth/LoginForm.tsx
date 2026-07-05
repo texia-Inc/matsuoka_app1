@@ -51,14 +51,14 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <input
           type="email"
           name="email"
           placeholder="メールアドレス"
           required
-          className="h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+          className="h-12 w-full rounded-md border border-gray-300 bg-white px-4 text-base shadow-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
         />
       </div>
       <div>
@@ -67,20 +67,20 @@ export function LoginForm() {
           name="password"
           placeholder="パスワード（6文字以上）"
           required
-          className="h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+          className="h-12 w-full rounded-md border border-gray-300 bg-white px-4 text-base shadow-sm outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
         />
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-base text-red-500">{error}</p>}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full h-9 rounded-md bg-gray-900 px-4 text-sm font-medium text-white shadow hover:bg-gray-700 disabled:opacity-50"
+        className="w-full h-12 rounded-md bg-gray-900 px-4 text-base font-medium text-white shadow hover:bg-gray-700 disabled:opacity-50"
       >
         {isSubmitting ? '処理中...' : isSignUp ? '新規登録' : 'ログイン'}
       </button>
       <button
         type="button"
-        className="w-full text-sm text-gray-500 underline"
+        className="w-full text-base text-gray-500 underline"
         onClick={() => { setIsSignUp(!isSignUp); setError(null) }}
       >
         {isSignUp ? 'すでにアカウントをお持ちの方はこちら' : '新規登録はこちら'}

@@ -89,7 +89,7 @@ export function DiaryForm({ date, diary, onSaved }: DiaryFormProps) {
           <MoodSlider value={mood} onChange={handleMoodChange} />
         </div>
       </div>
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={isSubmitting}>
         {isSubmitting ? '保存中...' : isEdit ? '日記を更新する' : '日記を保存する'}
       </Button>
     </form>

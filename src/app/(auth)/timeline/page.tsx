@@ -12,7 +12,7 @@ export default function TimelinePage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">タイムライン</h1>
-          <p className="text-sm text-gray-400 mt-2">過去の日記を振り返りましょう</p>
+          <p className="text-sm text-gray-500 mt-2">過去の日記を振り返りましょう</p>
         </div>
         <div className="relative mt-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
@@ -21,7 +21,7 @@ export default function TimelinePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="絞り込む..."
-            className="w-64 rounded-xl border border-gray-300 bg-white pl-8 pr-3 py-1.5 text-sm outline-none"
+            className="w-64 rounded-xl border border-gray-300 bg-white pl-8 pr-3 py-1.5 text-sm text-gray-700 outline-none placeholder:text-gray-500"
           />
         </div>
       </div>

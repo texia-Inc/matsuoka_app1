@@ -54,8 +54,8 @@ function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void 
           <div className="flex items-center gap-3">
             <span className="text-base font-semibold text-gray-800">{label}</span>
             <span
-              className="text-xs px-2 py-0.5 rounded-full"
-              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)' }}
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{ backgroundColor: 'var(--theme-50)', color: 'var(--theme-600)', borderColor: 'var(--theme-300)' }}
             >
               今月
             </span>
@@ -76,18 +76,18 @@ function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void 
       {open && (
         <div className="px-5 pb-5 space-y-4 border-t border-gray-100">
           <div className="pt-4 space-y-1.5">
-            <label className="text-sm font-medium text-gray-500">今月の目標</label>
+            <label className="text-sm font-medium text-gray-600">今月の目標</label>
             <textarea
               value={editGoal}
               onChange={(e) => setEditGoal(e.target.value)}
               placeholder="今月達成したいことを書いてみましょう..."
               rows={3}
-              className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm outline-none resize-none focus:border-gray-400 transition-colors"
+              className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm text-gray-600 outline-none resize-none focus:border-gray-400 transition-colors"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-500">振り返り</label>
+            <label className="text-sm font-medium text-gray-600">振り返り</label>
             <textarea
               value={editReflection}
               onChange={(e) => setEditReflection(e.target.value)}
@@ -101,13 +101,12 @@ function GoalCard({ goal, onUpdate }: { goal: Goal; onUpdate: (g: Goal) => void 
             <button
               onClick={handleSave}
               disabled={saving}
-              className="text-sm font-medium text-white px-4 py-1.5 rounded-lg transition-colors"
-              style={{ backgroundColor: 'var(--theme-600)' }}
+              className="text-sm font-medium text-white px-4 py-1.5 rounded-lg transition-colors bg-primary hover:bg-primary/90"
             >
               {saving ? '保存中...' : '保存する'}
             </button>
             {saved && (
-              <Check className="w-4 h-4" style={{ color: 'var(--theme-600)' }} />
+              <Check className="w-4 h-4 text-gray-600" />
             )}
           </div>
         </div>
@@ -161,7 +160,7 @@ export default function GoalsPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">目標・振り返り</h1>
-        <p className="text-sm text-gray-400 mt-1">月ごとに目標を立てて、月末に振り返りましょう</p>
+        <p className="text-sm text-gray-600 mt-1">目標を立てて、月末に振り返りましょう</p>
       </div>
 
       {showReminder && (
@@ -211,7 +210,7 @@ function AddPastMonthButton({ currentGoals, onAdd }: { currentGoals: Goal[]; onA
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+        className="text-sm text-gray-600 hover:text-gray-600 transition-colors"
       >
         + 過去の月を追加
       </button>

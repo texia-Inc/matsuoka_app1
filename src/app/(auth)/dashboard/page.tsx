@@ -55,6 +55,7 @@ export default function DashboardPage() {
 
   const dateLabel = format(new Date(selectedDate + 'T12:00:00'), 'yyyy年M月d日(E)', { locale: ja })
   const isToday = selectedDate === todayStr
+  const isFuture = selectedDate > todayStr
 
   return (
     <div className="space-y-6">
@@ -62,18 +63,15 @@ export default function DashboardPage() {
 
       {/* 選択日付のヘッダー（日記がない場合のみ表示） */}
       {!selectedDiary && !loading && (
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">{dateLabel}</h1>
-          {!isToday && (
-            <p className="text-sm text-gray-400 mt-1">過去の日記</p>
-          )}
-        </div>
+        <h1 className="text-xl font-bold text-gray-900">{dateLabel}</h1>
       )}
 
       {loading ? (
         <div className="h-32 bg-gray-100 rounded-2xl animate-pulse" />
       ) : selectedDiary ? (
         <DiaryCard diary={selectedDiary} />
+      ) : isFuture ? (
+        <p className="text-sm text-gray-400 text-center py-8">未来の日付には記録できません</p>
       ) : (
         <DiaryForm
           date={isToday ? undefined : selectedDate}

@@ -11,7 +11,7 @@ export default async function AuthLayout({
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/')
+    redirect('/auth/login')
   }
 
   const { count } = await supabase
@@ -19,7 +19,7 @@ export default async function AuthLayout({
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)
 
-  const displayName = user.user_metadata?.full_name ?? 'ゲスト'
+  const displayName = user.user_metadata?.full_name ?? ''
   const avatarUrl = user.user_metadata?.avatar_url ?? null
 
   return (
@@ -27,7 +27,7 @@ export default async function AuthLayout({
       <header className="sticky top-0 z-30 border-b bg-white py-3">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4">
           <HeaderNav
-            email={user.email ?? 'ゲスト'}
+            email={user.email ?? ''}
             initialName={displayName}
             initialAvatarUrl={avatarUrl}
             diaryCount={count ?? 0}

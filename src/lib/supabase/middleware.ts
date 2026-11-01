@@ -29,16 +29,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 未認証の場合は匿名ログインしてリダイレクト（cookieを確定させるため）
+  // 未認証の場合は匿名ログイン
   if (!user) {
-    const { error } = await supabase.auth.signInAnonymously()
-    if (!error) {
-      const redirectResponse = NextResponse.redirect(request.nextUrl)
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value)
-      })
-      return redirectResponse
-    }
+    await supabase.auth.signInAnonymously()
   }
 
   return supabaseResponse
